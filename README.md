@@ -4,7 +4,7 @@
 This is the project for the LiDAR-to-LiDAR Calibration framework GMMCalib. GMMCalib performs a joint registration of LiDAR point clouds and provides a transformation matrix between the sensors as well as the reconstructed shape of targets in the environment.
 
 
-<img src="doc/img/gmmcalib.png" width="1000px">
+<img src="doc/img/gmmcalib.png" width="400px">
 </div>
 
 ## Prerequisites
