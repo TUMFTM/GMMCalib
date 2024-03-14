@@ -16,7 +16,7 @@ The config file currently has four entries:
 ## Use GMMCalib
 A Dockerfile is provided for GMMCalib:
 
-You can build the Docker file with a defined <tag>: 
+You can build the Docker file with a defined `<tag>`: 
 
     docker build -t gmmcalib:<latest> -f docker/Dockerfile .
 
