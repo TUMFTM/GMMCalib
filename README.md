@@ -1,8 +1,11 @@
 <div align="center">
-<img src="doc/img/gmmcalib.png" width="1000px">
 
 # GMMCalib
 This is the project for the LiDAR-to-LiDAR Calibration framework GMMCalib. GMMCalib performs a joint registration of LiDAR point clouds and provides a transformation matrix between the sensors as well as the reconstructed shape of targets in the environment.
+
+
+<img src="doc/img/gmmcalib.png" width="1000px">
+</div>
 
 ## Prerequisites
 To begin, prepare the PCD files for each sensor, following the example provided in the `/data` directory.
@@ -17,15 +20,13 @@ A Dockerfile is provided for GMMCalib:
 
 You can build the Docker file using: 
 
-    ```
     docker build -t gmmcalib:<latest> -f docker/Dockerfile .
-    ```
+
 
 Then run the GMM-based calibration with: 
 
-    ```
     docker run -v $(pwd)/output:/app/output -it  gmmcalib:latest
-    ```
+
 
 The results, namely the calibration matrix and the numpy array of the reconstructed object, are saved in the `/output` path.
 
