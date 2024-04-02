@@ -31,6 +31,7 @@ The results, namely the calibration matrix and the numpy array of the reconstruc
 ## Work in Progress (WIP)
 GMMCalib is an ongoing project. Future developments include:
 - Improving the usability of GMMCalib, including input data handling and configuration.
+- Include routine for initial target placement.
 - Enhancing the code to support an arbitrary number of LiDAR sensors.
 - Implementing pre-processing steps to reduce computation effort for target-less calibration.
 
