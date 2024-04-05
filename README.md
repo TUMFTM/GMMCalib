@@ -1,9 +1,14 @@
 # GMMCalib
+## Extrinsic Calibration of LiDAR Sensors using GMM-based Joint Registration
 This is the project for the LiDAR-to-LiDAR Calibration framework GMMCalib. GMMCalib performs a joint registration of LiDAR point clouds and provides a transformation matrix between the sensors as well as the reconstructed shape of targets in the environment.
 
 <div align="center">
 <img src="doc/img/gmmcalib.png" width="400px">
 </div>
+ 
+ **Abstract:** State-of-the-art LiDAR calibration frameworks mainly use non-probabilistic registration methods such as Iterative Closest Point (ICP) and its variants. These methods suffer from biased results due to their pair-wise registration procedure as well as their sensitivity to initialization and parameterization. This often leads to misalignments in the calibration process. Probabilistic registration methods compensate for these drawbacks by specifically modeling the probabilistic nature of the observations. This paper presents GMMCalib, an automatic target-based extrinsic calibration approach for multi-LiDAR systems. Using an implementation of a Gaussian Mixture Model (GMM)-based registration method that allows joint registration of multiple point clouds, this data-driven approach is compared to ICP algorithms. We perform simulation experiments using the digital twin of the EDGAR research vehicle and validate the results in a real-world environment. We also address the local minima problem of local registration methods for extrinsic sensor calibration and use a distance-based metric to evaluate the calibration results. Our results show that an increase in robustness against sensor miscalibrations can be achieved by using GMM-based registration algorithms. 
+ 
+Preprint: [https://arxiv.org/abs/2404.03427](https://arxiv.org/abs/2404.03427)
 
 ## Prerequisites
 To begin, prepare the PCD files for each sensor, following the example provided in the `/data` directory.
