@@ -35,4 +35,12 @@ GMMCalib is an ongoing project. Future developments include:
 - Enhancing the code to support an arbitrary number of LiDAR sensors.
 - Implementing pre-processing steps to reduce computation effort for target-less calibration.
 
-
+## Citation
+```bibtex
+@article{tahiraj2024gmmcalib,
+  title={GMMCalib: Extrinsic Calibration of LiDAR Sensors using GMM-based Joint Registration},
+  author={Tahiraj, Ilir and Fent, Felix and Hafemann, Philipp and Ye, Egon and Lienkamp, Markus},
+  journal={arXiv preprint arXiv:2404.03427},
+  year={2024}
+}
+```
