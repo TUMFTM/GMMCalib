@@ -11,7 +11,8 @@ This is the project for the LiDAR-to-LiDAR Calibration framework GMMCalib. GMMCa
 Preprint: [https://arxiv.org/abs/2404.03427](https://arxiv.org/abs/2404.03427)
 
 ## Prerequisites
-To begin, prepare the PCD files for each sensor, following the example provided in the `/data` directory.
+To begin, prepare the PCD files for each sensor, following the example provided in the `/data` directory. 
+The more frames (i. e. the more pcd files) of the LiDAR scans are provided, the better the results!
 
 ## Configuration
 The config file currently has four entries:
