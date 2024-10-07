@@ -21,7 +21,7 @@ def calibrate(data_path, config_file_path, sequence):
     T_1 = [transformPCDs.homogeneous_transform(AllT[-1][0][i], AllT[-1][1][i].reshape(-1)) for i in range(nObs // 2)]
     T_2 = [transformPCDs.homogeneous_transform(AllT[-1][0][i], AllT[-1][1][i].reshape(-1)) for i in range(nObs // 2, nObs)]
 
-    T_calib = [np.dot(T_2[i], np.linalg.inv(T_1[i])) for i in range(len(T_1))]
+    T_calib = [np.dot(np.linalg.inv(T_2[i]), T_1[i]) for i in range(len(T_1))]
     T_final = transformPCDs.mean_transform(T_calib)
     print("Calibration Error: \n")
     print(T_final)
