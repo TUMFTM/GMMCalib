@@ -30,7 +30,7 @@ def homogeneous_to_euler(T):
         roll = 0
         yaw = -np.arctan2(R[0, 1], R[1, 1])
     else:
-    	roll = np.arctan2(R[2, 1] / np.cos(pitch), R[2, 2] / np.cos(pitch))
+        roll = np.arctan2(R[2, 1] / np.cos(pitch), R[2, 2] / np.cos(pitch))
         yaw = np.arctan2(R[1, 0] / np.cos(pitch), R[0, 0] / np.cos(pitch))
 
     euler_angles = np.array([roll, pitch, yaw])
