@@ -164,10 +164,10 @@ class GMM(GMMBase):
         ]
 
         sum_of_weights: List[float] = [
-            float(lmda_i.T @ Q)
+            float(np.sum(lmda_i * Q))
             for lmda_i in lmda
         ]
-
+        
         # Cross-covariances
         P: List[NDArray[np.float64]] = [
             X @ W[i].T - (mX[i] @ mW[i].T) / sum_of_weights[i]
