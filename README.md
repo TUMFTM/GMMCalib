@@ -34,6 +34,30 @@ Then run the GMM-based calibration with:
 
 The results, namely the calibration matrix and the numpy array of the reconstructed object, are saved in the `/output` path.
 
+## Use CADCalib
+
+<div align="center">
+<img src="doc/img/cadcalib.png" width="600px">
+</div>
+
+CADCalib extends GMMCalib with CAD-informed GMM centers. The same Docker image supports both methods.
+
+Run CADCalib with:
+
+    bash scripts/run_cad_calib.sh
+
+Or directly:
+
+    docker run -v $(pwd)/output:/app/output -v $(pwd)/data:/app/data -it gmmcalib:latest \
+        python src/gmmcalib.py \
+        --data_path ../data/single_chair/ \
+        --config_file_path ../config/config_single_chair.yaml \
+        --model_path ../data/models/chair.obj \
+        --method cad_calib \
+        --robust 1
+
+The calibration matrix is saved to `/output`.
+
 ## Work in Progress (WIP)
 GMMCalib is an ongoing project. Future developments include:
 - Improving the usability of GMMCalib, including input data handling and configuration.
