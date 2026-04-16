@@ -37,7 +37,7 @@ The results, namely the calibration matrix and the numpy array of the reconstruc
 ## Use CADCalib
 
 <div align="center">
-<img src="doc/img/cadcalib.png" width="600px">
+<img src="doc/img/cadcalib_diagram.png" width="600px">
 </div>
 
 CADCalib extends GMMCalib with CAD-informed GMM centers. The same Docker image supports both methods.
