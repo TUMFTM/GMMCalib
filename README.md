@@ -56,6 +56,19 @@ Or directly:
         --method cad_calib \
         --robust 1
 
+### Flags
+
+#### `--robust`
+
+Controls the anisotropy limit (`a_max`) of the CAD-informed GMM covariances.
+
+| Mode | `a_max` | Use case |
+|------|---------|----------|
+| Default (off) | 30 | Clean simulation data, low noise |
+| `--robust` (on) | 10 | Real-world data, high noise, sparse observations |
+
+Higher `a_max` enforces stronger point-to-plane constraints on flat surfaces, which improves accuracy when the CAD model closely matches the target. Lower `a_max` reduces sensitivity to noise and CAD-to-physical mismatch, improving convergence stability in real-world conditions.
+
 The calibration matrix is saved to `/output`.
 
 ## Work in Progress (WIP)

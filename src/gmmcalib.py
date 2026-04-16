@@ -11,7 +11,6 @@ from cad_model import CADModel
 from data_loader import PCDLoader
 from gmm_initialization import initialize_centers
 
-
 GMM_VARIANTS = {
     "default": ("gmm", "GMM"),
     "gmm": ("gmm", "GMM"),
@@ -145,25 +144,19 @@ if __name__ == "__main__":
 
     # algo hyper params
     debug_config = {}
-    debug_config['verbose'] = False
+    debug_config["verbose"] = False
 
     # set some reasonable defaults
-    if method == 'cad_calib':
-            
+    if method == "cad_calib":
+        config["initialization"] = {
+            "count_strategy": "median_fraction",
+            "fraction": 1.75,
+            "sampling_method": "poisson_disk",
+        }
         if args.robust:
-            config['initialization'] = {
-                "count_strategy": "fixed",
-                "n_centers": 1000,
-                "sampling_method": "poisson_disk",
-            }
-            debug_config['alimit'] = 0 # isotropic
+            debug_config["alimit"] = 10  # reduce anisotropy with high noise
         else:
-            config['initialization'] = {
-                "count_strategy": "median_fraction",
-                "fraction": 2.0,
-                "sampling_method": "poisson_disk",
-            }
-            debug_config['alimit'] = 30 # anisotropic
+            debug_config["alimit"] = 30  # highly anisotropic
 
     calibrate(
         pcd_loader.pcds_overlap,

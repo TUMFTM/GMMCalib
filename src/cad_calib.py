@@ -6,25 +6,24 @@ from numba import njit
 from numpy.typing import NDArray
 
 import transformPCDs
-from gmm_base import GMMBase
-from rerun_gmm_visualizer import RerunGMMVisualizer
-
 from common_types import (
-    PointCloud3N,
-    PointsN3,
+    Alpha,
     Centers3K,
     NormalsN3,
-    Alpha,
-    PrecisionVector,
+    PointCloud3N,
+    PointsN3,
     PrecisionMatrices,
+    PrecisionVector,
     Priors,
     Rotation,
-    Translation,
     Transform,
+    Translation,
     ViewTransforms,
     as_rotation,
     as_translation,
 )
+from gmm_base import GMMBase
+from rerun_gmm_visualizer import RerunGMMVisualizer
 
 
 def _skew(v: NDArray[np.float64]) -> NDArray[np.float64]:
@@ -175,7 +174,7 @@ class CADCalib(GMMBase):
 
         n_sensors = 2
         views_per_sensor = len(self.V) // n_sensors
-        if self.debug_config.get('sensor_positions'):
+        if self.debug_config.get("sensor_positions"):
             sensor_positions = [
                 np.asarray(p, dtype=np.float64)
                 for p in self.debug_config["sensor_positions"]
@@ -188,11 +187,11 @@ class CADCalib(GMMBase):
             ]
 
             n_sensors = len(sensor_positions)
-            
+
         self.sensor_assignment = [
             s_idx for s_idx in range(n_sensors) for _ in range(views_per_sensor)
         ]
-            
+
         self.R_extrinsic = [
             np.asarray(self.R[s_idx * views_per_sensor], dtype=np.float64).copy()
             for s_idx in range(n_sensors)
@@ -279,7 +278,6 @@ class CADCalib(GMMBase):
     def _initialize_anisotropy(self) -> None:
 
         # LSG-CPD anisotropy hyperparameters
-        lambda_param = self.debug_config.get("lambda", 0.2)
         a_max = self.debug_config.get("alimit", 30)
 
         # compute a_per_center on CAD centers only, then append ground
@@ -287,12 +285,19 @@ class CADCalib(GMMBase):
         curvature = self.cad_model.compute_surface_variation_at_points(
             self.X[:, :n_cad].T
         )
-        self.a_per_center = (
-            np.maximum(
-                2.0 / (1 + np.exp(lambda_param * (3 - 1.0 / (curvature + 1e-6)))) - 1, 0
-            )
-            * a_max
-        )
+
+        curv = np.log1p(curvature)
+
+        p10, p90 = np.percentile(curv, [10, 90])
+        curv_norm = np.clip((curv - p10) / (p90 - p10 + 1e-12), 0.0, 1.0)
+
+        # low curvature -> high anisotropy
+        self.a_per_center = a_max * (1.0 - curv_norm)
+
+        curv_pct = np.percentile(curvature, [0, 25, 50, 75, 90, 95, 99, 99.5, 100])
+        a_pct = np.percentile(self.a_per_center, [0, 25, 50, 75, 90, 95, 99, 100])
+        self._debug(f"Curvature percentiles: {curv_pct}")
+        self._debug(f"a_k percentiles: {a_pct}")
 
         self.curvature = curvature
 
@@ -522,7 +527,7 @@ class CADCalib(GMMBase):
             if max_delta < 1e-8:
                 break
 
-        if self.debug_config.get("log_hessian", False):
+        if self.debug_config.get("log_hessian", True):
             for s in range(n_sensors):
                 eigvals, eigvecs = np.linalg.eigh(H_per[s])
                 self._debug(f"\n=== Sensor {s} Hessian Eigenvalues ===")

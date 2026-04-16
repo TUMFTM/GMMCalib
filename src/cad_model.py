@@ -207,23 +207,61 @@ class CADModel:
             normals[i] = n / (np.linalg.norm(n) + 1e-12)
 
         return normals
-
     def compute_surface_variation_at_points(
         self,
         points: PointsN3,
-        k_neighbors: int = 12,
+        k_neighbors: int = 20,
     ) -> FloatArray:
         points_np = np.asarray(points, dtype=np.float64).reshape(-1, 3)
         surface_pts = np.asarray(self.surface_points.points, dtype=np.float64)
 
         curvatures = np.zeros(len(points_np), dtype=np.float64)
+        eps = 1e-12
+
         for i, point in enumerate(points_np):
             _, idx = self.surface_kdtree.query(point, k=k_neighbors)
-            nbrs = surface_pts[np.atleast_1d(idx)]
+            idx = np.atleast_1d(idx)
+            nbrs = surface_pts[idx]
+
+            if len(nbrs) < 6:
+                curvatures[i] = 0.0
+                continue
+
+            centroid = nbrs.mean(axis=0)
+            diff_c = nbrs - centroid
+            C = (diff_c.T @ diff_c) / max(len(nbrs), 1)
+
+            _, eigvecs = np.linalg.eigh(C)
+            normal = eigvecs[:, 0]
+            t1 = eigvecs[:, 2]
+            t2 = eigvecs[:, 1]
+
+            if np.dot(normal, point - centroid) < 0:
+                normal = -normal
+            if np.dot(np.cross(t1, t2), normal) < 0:
+                t2 = -t2
+
             diff = nbrs - point
-            C = (diff.T @ diff) / max(len(nbrs), 1)
-            eigvals = np.linalg.eigvalsh(C)
-            curvatures[i] = eigvals[0] / (eigvals.sum() + 1e-12)
+            x = diff @ t1
+            y = diff @ t2
+            z = diff @ normal
+
+            A = np.column_stack([x * x, x * y, y * y, x, y, np.ones_like(x)])
+
+            try:
+                coeffs, _, _, _ = np.linalg.lstsq(A, z, rcond=None)
+                a, b, c, _, _, _ = coeffs
+            except np.linalg.LinAlgError:
+                curvatures[i] = 0.0
+                continue
+
+            H = np.array([
+                [2.0 * a, b],
+                [b, 2.0 * c],
+            ], dtype=np.float64)
+
+            k_vals = np.linalg.eigvalsh(H)
+            curvatures[i] = np.max(np.abs(k_vals))
 
         return curvatures
 
