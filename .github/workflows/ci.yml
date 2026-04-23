@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feature/cadcalib]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      RERUN: "OFF"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          docker build \
+            -f docker/Dockerfile \
+            -t gmmcalib:ci \
+            .
+
+      - name: Run GMMCalib smoke test
+        run: |
+          docker run --rm \
+            -e RERUN="${RERUN}" \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            gmmcalib:ci \
+            /bin/bash -lc "python src/gmmcalib.py"
+
+      - name: Run CADCalib smoke test
+        run: |
+          docker run --rm \
+            -e RERUN="${RERUN}" \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            gmmcalib:ci \
+            /bin/bash -lc "bash scripts/run_cad_calib.sh"
+
+      - name: Upload metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics
+          path: metrics.txt
+          if-no-files-found: ignore

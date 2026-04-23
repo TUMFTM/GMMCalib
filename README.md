@@ -34,6 +34,43 @@ Then run the GMM-based calibration with:
 
 The results, namely the calibration matrix and the numpy array of the reconstructed object, are saved in the `/output` path.
 
+## Use CADCalib
+
+<div align="center">
+<img src="doc/img/cadcalib_diagram.png" width="600px">
+</div>
+
+CADCalib extends GMMCalib with CAD-informed GMM centers. The same Docker image supports both methods.
+
+Run CADCalib with:
+
+    bash scripts/run_cad_calib.sh
+
+Or directly:
+
+    docker run -v $(pwd)/output:/app/output -v $(pwd)/data:/app/data -it gmmcalib:latest \
+        python src/gmmcalib.py \
+        --data_path ../data/single_chair/ \
+        --config_file_path ../config/config_single_chair.yaml \
+        --model_path ../data/models/chair.obj \
+        --method cad_calib \
+        --robust 1
+
+### Flags
+
+#### `--robust`
+
+Controls the anisotropy limit (`a_max`) of the CAD-informed GMM covariances.
+
+| Mode | `a_max` | Use case |
+|------|---------|----------|
+| Default (off) | 30 | Clean simulation data, low noise |
+| `--robust` (on) | 10 | Real-world data, high noise, sparse observations |
+
+Higher `a_max` enforces stronger point-to-plane constraints on flat surfaces, which improves accuracy when the CAD model closely matches the target. Lower `a_max` reduces sensitivity to noise and CAD-to-physical mismatch, improving convergence stability in real-world conditions.
+
+The calibration matrix is saved to `/output`.
+
 ## Work in Progress (WIP)
 GMMCalib is an ongoing project. Future developments include:
 - Improving the usability of GMMCalib, including input data handling and configuration.
